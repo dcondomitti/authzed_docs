@@ -177,15 +177,19 @@ definition {{ tenant }}/post {
 }\`
 ·
 func main() {
+  withSysCerts, err := grpcutil.WithSystemCerts(grpcutil.VerifyCA)
+  if err != nil {
+    log.Fatalf("failed to initialize system cert chain: %s", err)
+  }
 	client, err := authzed.NewClient(
 		"{{ endpoint }}",
     {% if authzed %}
             grpcutil.WithBearerToken("{{ token }}"),
-	        grpcutil.WithSystemCerts(grpcutil.VerifyCA),
+	        withSysCerts,
     {% else %}
             // NOTE: For SpiceDB behind TLS, use:
                 // grpcutil.WithBearerToken("{{ token }}"),
-                // grpcutil.WithSystemCerts(grpcutil.VerifyCA),
+                // withSysCerts,
       	        grpcutil.WithInsecureBearerToken("{{ token }}"),
       	        grpc.WithTransportCredentials(insecure.NewCredentials()),
     {% endif %}
@@ -258,11 +262,11 @@ public class App {
 ·
     String schema = """
             definition {{ tenant }}/user {}
-·                            
+·
             definition {{ tenant }}/post {
                 relation reader: {{ tenant }}/user
                 relation writer: {{ tenant }}/user
-                            
+
                 permission read = reader + writer
                 permission write = writer
             }
@@ -400,11 +404,15 @@ import (
 )
 ·
 func main() {
+  withSysCerts, err := grpcutil.WithSystemCerts(grpcutil.VerifyCA)
+  if err != nil {
+    log.Fatalf("failed to initialize system cert chain: %s", err)
+  }
 	client, err := authzed.NewClient(
 		"{{ endpoint }}",
     {% if authzed %}
             grpcutil.WithBearerToken("{{ token }}"),
-	        grpcutil.WithSystemCerts(grpcutil.VerifyCA),
+	        withSysCerts,
     {% else %}
     	grpcutil.WithInsecureBearerToken("{{ token }}"),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
@@ -716,11 +724,15 @@ import (
 )
 ·
 func main() {
+  withSysCerts, err := grpcutil.WithSystemCerts(grpcutil.VerifyCA)
+  if err != nil {
+    log.Fatalf("failed to initialize system cert chain: %s", err)
+  }
 	client, err := authzed.NewClient(
 		"{{ endpoint }}",
     {% if authzed %}
             grpcutil.WithBearerToken("{{ token }}"),
-	        grpcutil.WithSystemCerts(grpcutil.VerifyCA),
+	        withSysCerts,
     {% else %}
     	grpcutil.WithInsecureBearerToken("{{ token }}"),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
